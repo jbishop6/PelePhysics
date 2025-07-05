@@ -1,4 +1,5 @@
 #include "ReactorCvodeCustomLinSolver.H"
+#include <sunlinsol/sunlinsol_spgmr.h>
 
 namespace pele::physics::reactions::cvode {
 
@@ -76,7 +77,8 @@ SUNLinSolGetType_Dense_custom(SUNLinearSolver S)
 int
 SUNLinSolSetup_Dense_custom(SUNLinearSolver S, SUNMatrix A)
 {
-  return (SUN_SUCCESS);
+  //return (SUN_SUCCESS);
+  return (SUNLS_SUCCESS);
 }
 
 int
