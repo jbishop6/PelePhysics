@@ -1,7 +1,8 @@
 #ifndef MANIFOLD_H
 #define MANIFOLD_H
 
-#include "BlackBoxFunctionFactory.H"
+//#include "BlackBoxFunctionFactory.H"
+#include "Utility/BlackBoxFunction/BlackBoxFunctionFactory.H"
 
 namespace pele::physics::eos {
 
