@@ -5,7 +5,8 @@
 #include <AMReX_ParmParse.H>
 
 #include "mechanism.H"
-#include "BlackBoxFunction.H"
+// #include "BlackBoxFunction.H"
+#include "Utility/BlackBoxFunction/BlackBoxFunction.H"
 #include "PhysicsConstants.H"
 #include "PeleParamsGeneric.H"
 
