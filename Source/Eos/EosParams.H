@@ -38,7 +38,7 @@ struct EosParm<GammaLaw>
 template <>
 struct EosParm<Manifold>
 {
-  const BlackBoxFunctionData* manf_data;
+ \\ const BlackBoxFunctionData* manf_data;
   amrex::Real Pnom_cgs;
   density_lookup_type dens_lookup;
   bool compute_temperature{false};
