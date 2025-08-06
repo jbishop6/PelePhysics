@@ -77,7 +77,7 @@ struct InitParm<eos::EosParm<eos::GammaLaw>>
 template <>
 struct HostOnlyParm<eos::EosParm<eos::Manifold>>
 {
-  std::shared_ptr<PeleParamsGeneric<BlackBoxFunctionData>> manfunc_par;
+ // std::shared_ptr<PeleParamsGeneric<BlackBoxFunctionData>> manfunc_par;
 };
 
 template <>
@@ -89,7 +89,7 @@ struct InitParm<eos::EosParm<eos::Manifold>>
     std::string manifold_model;
     pp.get("model", manifold_model);
     parm_in->m_host_only_parm.manfunc_par =
-      PeleParamsGeneric<BlackBoxFunctionData>::create(manifold_model);
+    //  PeleParamsGeneric<BlackBoxFunctionData>::create(manifold_model);
     parm_in->m_host_only_parm.manfunc_par->host_only_parm().parm_parse_prefix =
       "manifold";
     parm_in->m_host_only_parm.manfunc_par->initialize();
