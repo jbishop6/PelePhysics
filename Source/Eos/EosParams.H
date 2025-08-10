@@ -5,7 +5,7 @@
 #include <AMReX_ParmParse.H>
 
 #include "mechanism.H"
-// #include "BlackBoxFunction.H"
+#include "BlackBoxFunction.H"
 #include "PhysicsConstants.H"
 #include "PeleParamsGeneric.H"
 
@@ -38,7 +38,7 @@ struct EosParm<GammaLaw>
 template <>
 struct EosParm<Manifold>
 {
-// const BlackBoxFunctionData* manf_data;
+  const BlackBoxFunctionData* manf_data;
   amrex::Real Pnom_cgs;
   density_lookup_type dens_lookup;
   bool compute_temperature{false};
@@ -77,7 +77,7 @@ struct InitParm<eos::EosParm<eos::GammaLaw>>
 template <>
 struct HostOnlyParm<eos::EosParm<eos::Manifold>>
 {
- // std::shared_ptr<PeleParamsGeneric<BlackBoxFunctionData>> manfunc_par;
+  std::shared_ptr<PeleParamsGeneric<BlackBoxFunctionData>> manfunc_par;
 };
 
 template <>
@@ -88,19 +88,19 @@ struct InitParm<eos::EosParm<eos::Manifold>>
     amrex::ParmParse pp("manifold");
     std::string manifold_model;
     pp.get("model", manifold_model);
-    //parm_in->m_host_only_parm.manfunc_par =
-    //  PeleParamsGeneric<BlackBoxFunctionData>::create(manifold_model);
-    //parm_in->m_host_only_parm.manfunc_par->host_only_parm().parm_parse_prefix =
-     // "manifold";
-    //parm_in->m_host_only_parm.manfunc_par->initialize();
-    //const BlackBoxFunctionData* d_manf_data_in =
-     // parm_in->m_host_only_parm.manfunc_par->device_parm();
-   // BlackBoxFunctionData* h_manf_data_in =
-     // &(parm_in->m_host_only_parm.manfunc_par->host_parm());
+    parm_in->m_host_only_parm.manfunc_par =
+      PeleParamsGeneric<BlackBoxFunctionData>::create(manifold_model);
+    parm_in->m_host_only_parm.manfunc_par->host_only_parm().parm_parse_prefix =
+      "manifold";
+    parm_in->m_host_only_parm.manfunc_par->initialize();
+    const BlackBoxFunctionData* d_manf_data_in =
+      parm_in->m_host_only_parm.manfunc_par->device_parm();
+    BlackBoxFunctionData* h_manf_data_in =
+      &(parm_in->m_host_only_parm.manfunc_par->host_parm());
 
-   // parm_in->m_h_parm.manf_data = d_manf_data_in;
-    // First (N-1) species are table dimensions (last species corresponds to
-    // density)
+    parm_in->m_h_parm.manf_data = d_manf_data_in;
+     First (N-1) species are table dimensions (last species corresponds to
+     density)
     AMREX_ALWAYS_ASSERT(h_manf_data_in->Ndim == NUM_SPECIES - 1);
 
     pp.query("v", parm_in->m_h_parm.verbose);
@@ -114,7 +114,7 @@ struct InitParm<eos::EosParm<eos::Manifold>>
     pp.query("density_lookup_type", density_lookup_type_string);
     if (density_lookup_type_string == "linear") {
       parm_in->m_h_parm.dens_lookup = eos::density_lookup_type::linear;
-      //parm_in->m_h_parm.idx_density = get_var_index("RHO", h_manf_data_in);
+      parm_in->m_h_parm.idx_density = get_var_index("RHO", h_manf_data_in);
       if (verbose > 0) {
         amrex::Print()
           << "Manifold EOS: Using linear density lookups : index = "
@@ -122,7 +122,7 @@ struct InitParm<eos::EosParm<eos::Manifold>>
       }
     } else if (density_lookup_type_string == "log") {
       parm_in->m_h_parm.dens_lookup = eos::density_lookup_type::log;
-      //parm_in->m_h_parm.idx_density = get_var_index("lnRHO", h_manf_data_in);
+      parm_in->m_h_parm.idx_density = get_var_index("lnRHO", h_manf_data_in);
       if (verbose > 0) {
         amrex::Print()
           << "Manifold EOS: Using logarithmic density lookups : index = "
@@ -130,7 +130,7 @@ struct InitParm<eos::EosParm<eos::Manifold>>
       }
     } else if (density_lookup_type_string == "inverse") {
       parm_in->m_h_parm.dens_lookup = eos::density_lookup_type::inverse;
-      //parm_in->m_h_parm.idx_density = get_var_index("invRHO", h_manf_data_in);
+      parm_in->m_h_parm.idx_density = get_var_index("invRHO", h_manf_data_in);
       if (verbose > 0) {
         amrex::Print()
           << "Manifold EOS: Using inverse density lookups : index = "
@@ -141,7 +141,7 @@ struct InitParm<eos::EosParm<eos::Manifold>>
     }
 
     // Get important indices
-    //parm_in->m_h_parm.idx_T = get_var_index("T", h_manf_data_in);
+    parm_in->m_h_parm.idx_T = get_var_index("T", h_manf_data_in);
 
     // For manifold table parameter source terms, assume if index not found,
     // source term is 0 For neural net, require a definition to be supplied for
@@ -214,8 +214,8 @@ struct InitParm<eos::EosParm<eos::Manifold>>
 
   static void host_deallocate(PeleParams<eos::EosParm<eos::Manifold>>* parm_in)
   {
-    //parm_in->m_host_only_parm.manfunc_par->deallocate();
-    //parm_in->m_host_only_parm.manfunc_par = nullptr;
+    parm_in->m_host_only_parm.manfunc_par->deallocate();
+    parm_in->m_host_only_parm.manfunc_par = nullptr;
   }
 };
 #endif
