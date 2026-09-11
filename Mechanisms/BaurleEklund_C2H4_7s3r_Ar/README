@@ -1,1 +1,114 @@
+20230106 - MQ - Add Ar from grimech3.0
+conda create --name cantera-env --channel cantera cantera ipython matplotlib jupyter
+conda activate cantera-env
+pip3 install pint
+pip3 install symengine
+pip3 install pandas
+pip3 install sympy
+pip3 install toml
+pip3 install poetry
+
+
+20221017 - MQ - Found Baurle paper had given T_a and I read them as E_a, so the activation energies are all off by 1.987 = Ru [cal/(mol-K)]
+
+20221006 - MQ - Added He from Shepard's High-T air mech.
+
+With:
+python3 -m cantera.cti2yaml airNASA9ions.cti
+And some copy and paste
+
+
+
+20220924 - MQ - For the three-step mechanism of XXX we must convert from chemkin file type to ymal:
+cd ${PELE_PHYSICS_HOME}/Support/ceptr
+poetry run ck2yaml --input=${PATH_TO_CHEMKIN_DIR}/mechanism.inp --thermo=${PATH_TO_CHEMKIN_DIR}/therm.dat --transport=${PATH_TO_CHEMKIN_DIR}/tran.dat --permissive
+
+Try:
+poetry run ck2yaml --input=/media/matt/Data5_202108/20220802_PeleC/PeleC/Submodules/PelePhysics/Support/Mechanism/Models/ThreeStep/C2H4air_7s3r.mdl --permissive
+
+Nope!
+
+?python -m cantera.cti2yaml mymech.cti
+poetry run cti2yaml /media/matt/Data5_202108/20220802_PeleC/PeleC/Submodules/PelePhysics/Support/Mechanism/Models/ThreeStep/C2H4air_7s3r.mdl
+
+Nope!
+
+poetry run ctml2yaml /media/matt/Data5_202108/20220802_PeleC/PeleC/Submodules/PelePhysics/Support/Mechanism/Models/ThreeStep/C2H4air_7s3r.mdl
+
+Nope!
+
+
+
+20220924 - MQ - On Ubuntu 22.04 everything is up to date and peotry install was easy:
+curl -sSL https://install.python-poetry.org | python3 -
+
+
+
+20220802 - MQ - Initial use for ffcmy-12-RDE
+
+
+Had to get Python3.8 up and running on the system and start it in an env (see below)
+Errors a plenty, but once installed wheel, poetry was able to instal the required packages
+After that, the mechanism.yaml file was processed by calling:
+./convert.sh
+And the .cpp and .H files were created
+
+sudo apt install clang-format
+Makes the header file more human readable, I believe.
+
+
+
+From:
+https://askubuntu.com/questions/1197683/how-do-i-install-python-3-8-in-lubuntu-18-04
+
+This post is community wiki so as to not claim the credit of @Kulfy's comment. This procedure worked on Ubuntu 18.04.
+
+    DON'T EVER CHANGE DEFAULT PYTHON!!! It may cause your system to break and some applications won't even run. It's far far far better to invoke python3.8 using python3.8 command
+
+When installing python3.8, do the following
+
+$ sudo apt-get install python3.8 python3.8-dev python3.8-distutils python3.8-venv
+
+For most people this will be acceptable as they will be using a virtual environment for development. Construct a virtual environment and activate it as you usually would. This will leave you in a terminal where python resolves to python3.8:
+
+$ python3.8 -m venv dev3.8/
+$ source dev3.8/bin/activate
+(dev3.8) $ which python
+...dev3.8/bin/python
+(dev3.8) $ python --version
+Python 3.8.0
+
+Neglecting to install python3.8-venv will result in an unhelpful error, that suggests you should install python-venv which resolves to python3.6-venv:
+
+$ python3.8 -m venv dev3.8/
+The virtual environment was not created successfully because ensurepip is not
+available.  On Debian/Ubuntu systems, you need to install the python3-venv
+package using the following command.
+
+    apt-get install python3-venv
+
+You may need to use sudo with that command.  After installing the python3-venv
+package, recreate your virtual environment.
+
+Failing command: ... (trimmed for formatting)
+
+Share
+Edit
+Follow
+edited Jun 6, 2020 at 18:28
+community wiki
+
+3 revs
+Rob Hall
+
+    2
+    On a fresh install of 18.04, I still received the ensurepip error even though python3.8-venv had been installed. Had to also install python3.8-distutils to resolve the virtual environment creation error. – 
+    Chuck Batson
+    Jun 6, 2020 at 18:26
+    Doing the above works. However, when installing whatever happens to be in my requirements.txt logs this: Using legacy 'setup.py install' for <package>, since package 'wheel' is not installed. Any reason not to install wheel? – 
+    Snake Verde
+    Aug 24, 2021 at 15:26
+    @SnakeVerde It's worth having wheel installed but I tend to install it in my local virtual environment. I have a small litany of commands that I execute whenever I'm modifying a virtual environment (to install packages or updates, etc). After entering into the virtual environment but before doing anything special, invoke pip install --upgrade pip setuptools wheel. This keeps pip from yelling about older versions and ensures that any package upgrades are using the most up-to-date versions of whatever build tools are relevant. – 
+    Rob Hall
+    Oct 5, 2021 at 19:58
 
