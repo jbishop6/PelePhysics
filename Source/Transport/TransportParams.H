@@ -250,7 +250,27 @@ struct InitParm<transport::TransParm<EOSType, transport::SimpleTransport>>
     egtransetNLIN(tparm->nlin.data());
     egtransetCOFETA(tparm->fitmu.data());
     egtransetCOFLAM(tparm->fitlam.data());
-    egtransetCOFD(tparm->fitdbin.data());
+
+    {
+        amrex::GpuArray<amrex::Real, NUM_SPECIES * NUM_SPECIES * 4> cofd;
+    
+        // Load the full 324-coefficient table.
+        egtransetCOFD(cofd.data());
+    
+        // Pack unique species pairs into Simple transport's layout.
+        for (int i = 0; i < NUM_SPECIES; ++i) {
+            for (int j = i; j < NUM_SPECIES; ++j) {
+                const int src = 4 * (i + NUM_SPECIES * j);
+                const int dst = 4 * (j * (j + 1) / 2 + i);
+    
+                for (int k = 0; k < 4; ++k) {
+                    tparm->fitdbin[dst + k] = cofd[src + k];
+                }
+            }
+        }
+    }
+
+
     amrex::ParmParse pp("transport");
     pp.query("use_soret", tparm->use_soret);
     if (tparm->use_soret) {
